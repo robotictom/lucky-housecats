@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--Import Google Icon Font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+    
+    <div class="container center-align">
+        <div class="row">
+            <div class="col s12">
+                <h1>lucky housecats</h1>
+            </div>
+            <div class="col s6">
+                GRAND: <span id="jackpot_grand">$0000</span>
+            </div>
+            <div class="col s6">
+                MAJOR: <span id="jackpot_major">$0000</span>
+            </div>
+            <div class="col s6">
+                MINOR: <span id="jackpot_minor">$0000</span>
+            </div>
+            <div class="col s6">
+                MINI: <span id="jackpot_mini">$0000</span>
+            </div>            
+        </div>
+
+        <div class="row">
+            <div class="col s12" id="slotContainer">
+                <canvas id="slotCanvas"></canvas>
+            </div>
+            <div class="col s12">
+                <a id="spin" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s6">
+                <div id="balance">Balance: $100</div>
+            </div>
+
+            <div class="col s6">
+                <div id="message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!--JavaScript at end of body for optimized loading-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <!-- Load config.js first -->
+    <script src="config.js"></script>
+    <!-- Load main script -->
+    <script src="script.js"></script>
+</body>
+</html>

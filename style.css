@@ -1,19 +1,202 @@
-body {
-    font-family: "Roboto", serif;
+html,
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: 'Darker Grotesque', serif;
     font-optical-sizing: auto;
-    font-weight: 400;
+    font-weight: 600;
     font-style: normal;
-    font-variation-settings: "wdth" 100;
+    font-variation-settings: 'wdth' 100;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background-color: #90caf9;
+    color: #000;
 }
 
 canvas {
     width: 100%;
     height: auto; /* Maintains aspect ratio */
     display: block; /* Removes extra space below the canvas */
+    background: #fff;
+    border: solid #263238;
+    border-width: 0 2px;
 }
 
 h1 {
-    font-family: "Luckiest Guy", serif;
+    font-family: 'DotGothic16', serif;
     font-weight: 400;
     font-style: normal;
+    margin: 0;
+    font-size: 2rem;
+}
+
+@media (width >= 600px) {
+    h1 {
+        font-size: 3rem;
+    }
+}
+
+h5 {
+    font-family: 'DotGothic16', serif;
+    font-weight: 400;
+    font-style: normal;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border: 2px solid #263238;
+    padding: 0.75rem;
+}
+
+.row {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.gameUI:not(:has(#gameUI-message)) {
+    margin: 0;
+    border: 2px solid #263238;
+    padding: 0.75rem;
+}
+
+.gameUI .gameUI-output {
+    font-family: 'DotGothic16', serif;
+    font-weight: 400;
+    font-style: normal;
+    width: 100%;
+    height: auto;
+    margin: 0 0 0.5em 0;
+    border: 1px solid #ff6f00;
+    padding: 0.25rem;
+}
+
+.gameUI .gameUI-output.empty {
+    border: none;
+}
+
+.gameUI label {
+    color: #000;
+    text-transform: uppercase;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+}
+
+.gameUI .btn-floating.btn-large {
+    width: 66%;
+    height: auto;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.gameUI .btn-large i {
+    font-size: 3rem;
+    line-height: 1;
+    color: #fff;
+}
+
+.gameUI .controls .btn-small {
+    --btn-padding: 15px;
+}
+
+#preloader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #90caf9;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#preloader .row {
+    margin: 0.25rem auto;
+}
+
+#preloader img {
+    border: 2px solid #000;
+    max-height: 400px;
+    margin: 0.25rem auto 1rem;
+}
+
+#preloader h1 {
+    margin: 0.5rem auto 0.5rem;
+}
+
+#preloader p,
+#preloader button {
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    font-weight: 400;
+}
+
+footer a {
+    text-decoration: underline;
+    color: #263238;
+}
+
+#gamewrapper {
+    max-height: 100vh;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#preloader-animation {
+    display: block;
+    margin: 0 auto;
+}
+
+#modal-balance img {
+    max-width: 25%;
+}
+
+#modal-balance .gameUI-output {
+    max-width: 50%;
+    font-family: 'DotGothic16', serif;
+    font-weight: 400;
+    font-style: normal;
+    width: 100%;
+    height: auto;
+    margin: 0.5rem auto;
+    border: 1px solid #ff6f00;
+    padding: 0.25rem;
+    font-size: 1.5rem;
+}
+
+#modal-balance label {
+    color: #000;
+    text-transform: uppercase;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+}
+
+#modal-balance h2 {
+    font-family: 'DotGothic16', serif;
+    font-weight: 400;
+    font-style: normal;
+    margin: 0;
+    font-size: 2rem;
 }

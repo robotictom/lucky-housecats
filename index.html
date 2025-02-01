@@ -4,10 +4,12 @@
     <!--Import Google Icon Font-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300..900&family=DotGothic16&family=Luckiest+Guy&family=Pixelify+Sans:wght@400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/css/materialize.min.css">
     
     <link rel="stylesheet" href="style.css">
     
@@ -15,53 +17,161 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 
-<body>
-    
-    <div class="container center-align">
+<body class="">
+    <div id="preloader" class="center-align container">
+        
         <div class="row">
             <div class="col s12">
-                <h1>lucky housecats</h1>
+                <h1>LUCKY HOUSECATS</h1>
+                <p>FEATURING LILLY AND KAREN</p>
+                <img class="responsive-img circle" src="images/introduction.webp"/>                
+                <div id="preloader-animation" class="preloader-wrapper big active">
+                    <div class="spinner-layer spinner-yellow-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div><div class="gap-patch">
+                            <div class="circle"></div>
+                        </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="preloader-action" class="action hide">
+                    <button aria-label="Play game with sound" class="waves-effect waves-light btn amber darken-3" data-volume="true">
+                        PLAY WITH SOUND
+                    </button>
+                    <button aria-label="Play game without sound" class="waves-effect waves-light btn amber darken-3" data-volume="false">
+                        PLAY WITHOUT SOUND
+                    </button>
+                </div>
             </div>
-            <div class="col s6">
-                GRAND: <span id="jackpot_grand">$0000</span>
-            </div>
-            <div class="col s6">
-                MAJOR: <span id="jackpot_major">$0000</span>
-            </div>
-            <div class="col s6">
-                MINOR: <span id="jackpot_minor">$0000</span>
-            </div>
-            <div class="col s6">
-                MINI: <span id="jackpot_mini">$0000</span>
-            </div>            
+            
         </div>
-
+    </div>
+    
+    <div id="gamewrapper" class="center-align container">
+        <div class="row valign-wrapper gameUI light-blue lighten-5">
+            <div class="col s12 m4 l2">
+                <div id="gameUI-jackpot_grand" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$0,000</div>
+                <label for="gameUI-jackpot_grand">GRAND</label>
+                
+                <div id="gameUI-jackpot_minor" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$0,000</div>
+                <label for="gameUI-jackpot_minor">MINOR</label>
+            </div>
+            <div class="col s12 m4 l8">
+                <h1>LUCKY HOUSECATS</h1>
+            </div>
+            <div class="col s12 m4 l2">
+                <div id="gameUI-jackpot_major" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$0,000</div>
+                <label for="gameUI-jackpot_major">MAJOR</label>
+                
+                <div id="gameUI-jackpot_mini" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$0,000</div>
+                <label for="gameUI-jackpot_mini">MINI</label>
+            </div>
+        </div>
+        
         <div class="row">
-            <div class="col s12" id="slotContainer">
+            <div class="col s12" id="slotContainerSizer">
                 <canvas id="slotCanvas"></canvas>
             </div>
-            <div class="col s12">
-                <a id="spin" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+        </div>
+        
+        <div class="row gameUI">
+            <div class="col s12 center-align">
+                <h5 id="gameUI-message" class="blue-grey darken-3 cyan-text text-lighten-1">&nbsp;</h5>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col s6">
-                <div id="balance">Balance: $100</div>
+        
+        <div class="row gameUI blue-grey lighten-5">
+            
+            <div class="col s6 m2">
+                <div id="gameUI-balance" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$100</div>
+                <label for="gameUI-balance">Credit</label>
+                <div class="controls"><div class="transparent btn">&nbsp;</div></div>
             </div>
-
-            <div class="col s6">
-                <div id="message"></div>
+            
+            <div class="col s6 m2">
+                <div id="gameUI-lines" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">20</div>
+                <label for="gameUI-lines">Total Lines</label>
+                <div class="controls">
+                    <button aria-label="Decrease lines" class="gameUI-action waves-effect btn-small" data-action="lines" data-increment="-1">
+                        <i class="material-icons">arrow_downward</i>
+                    </button>
+                    <button aria-label="Increase lines" class="gameUI-action waves-effect btn-small" data-action="lines" data-increment="1">
+                        <i class="material-icons">arrow_upward</i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="col s6 m2">
+                <div id="gameUI-creditvalue" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$0.01</div>
+                <label for="gameUI-creditvalue">Coin Value</label>
+                <div class="controls center-align">
+                    <button aria-label="Decrease coin vaue" class="gameUI-action waves-effect btn-small" data-action="coinvalue" data-increment="-1">
+                        <i class="material-icons">arrow_downward</i>
+                    </button>
+                    <button aria-label="Increase coin value" class="gameUI-action waves-effect btn-small" data-action="coinvalue"  data-increment="1">
+                        <i class="material-icons">arrow_upward</i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="col s6 m2">
+                <div id="gameUI-totalbet" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$0.20</div>
+                <label for="gameUI-totalbet">Total Bet</label>
+                <div class="controls"><div class="transparent btn">&nbsp;</div></div>
+            </div>
+            
+            <div class="col s6 m2">
+                <div class="gameUI-output empty">&nbsp;</div>
+                <label for="gameUI-creditvalue">Options</label>
+                <div class="controls">
+                    <button aria-label="Turn volume off" class="gameUI-action waves-effect btn-small" data-action="sound">
+                        <i class="material-icons">volume_up</i>
+                    </button>
+                    <button aria-label="Add to balance" class="gameUI-action waves-effect btn-small modal-trigger" data-target="modal-balance">
+                        <i class="material-icons">attach_money</i>
+                    </button>                    
+                </div>
+            </div>
+            
+            <div class="col s6 m2">
+                <a id="spin" class="btn-floating btn-large waves-effect waves-light"><i class="material-icons">play_arrow</i></a>
             </div>
         </div>
     </div>
     
-    <!--JavaScript at end of body for optimized loading-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <div id="modal-balance" class="modal white">
+        <div class="modal-content center-align row">
+            <div class="col s12">
+                <h3>MANAGE BALANCE</h3>
+                <img src="images/currency.png" alt="Currency icon" class="currency-icon" />
+                
+                <div id="gameUI-balance-modal" class="gameUI-output blue-grey darken-3 cyan-text text-lighten-1">$100</div>
+                <label for="gameUI-balance">Credit</label>  
+            </div>
+            <div class="col s12">
+                <button aria-label="Add to balance" class="gameUI-action waves-effect btn-small" data-action="addbalance" data-increment="20">
+                    ADD $20.00
+                </button>
+
+                <button aria-label="Add to balance" class="gameUI-action waves-effect btn-small" data-action="addbalance" data-increment="100">
+                    ADD $100.00
+                </button>
+            </div>
+            <div class="col s12">
+            <a href="#!" class="modal-close waves-effect black-text btn text">Close</a>       
+            </div>
+        </div>
+    </div>
     
-    <!-- Load config.js first -->
+    <footer class="blue-grey-text text-darken-4">
+        <p>a game by <a href="https://www.robotictom.com" target="_new">tom sullivan</a>. for fun only, there is no real money involved in this game.</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@2.1.1/dist/js/materialize.min.js"></script>
     <script src="config.js"></script>
-    <!-- Load main script -->
     <script src="script.js"></script>
 </body>
 </html>

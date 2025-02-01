@@ -20,12 +20,13 @@ const slotContainer = document.getElementById('slotContainerSizer');
 
 let breakCounter = 0;
 
-const debugmode = false;
+const debugmode = true;
 
 gameUI.status.gameState = {
     LOADING: 'LOADING',
     IDLE: 'IDLE',
     SPINNING: 'SPINNING',
+    STOPPING: 'STOPPING',
     CALCULATING_PAYOUT: 'CALCULATING_PAYOUT',
     SHOWING_PAYOUT: 'SHOWING_PAYOUT',
     BONUS: 'BONUS',
@@ -296,6 +297,7 @@ function initReels() {
 
         reels.push({
             id: i + 1,
+            state: gameUI.status.gameState.IDLE,
             x: i * (gameUI.dimensions.symbolWidth + gameUI.config.reelSpacing),
             y: -target * gameUI.dimensions.symbolHeight,
             spinning: false,
@@ -375,6 +377,7 @@ async function spinReels() {
     reels.forEach((reel, index) => {
         setTimeout(() => {
             reel.spinning = true;
+            reel.state = gameUI.status.gameState.SPINNING;
             reel.spinSpeed = gameUI.config.reelSpinSpeed;
         }, index * Math.floor(Math.random() * config.reelStopDelay));
     });
@@ -398,6 +401,7 @@ async function spinReels() {
                 }
                 if (elapsed >= reel.stopTime && (index === 0 || reels[index - 1].spinning === false)) {
                     reel.target = fetchReelResults(reel.symbols.length - gameUI.config.rowCount);
+                    reel.state = gameUI.status.gameState.STOPPING;
                     stopReel(index);
                 }
             }
@@ -430,6 +434,7 @@ async function spinReels() {
         if (!reel.spinning) return;
 
         reel.spinning = false;
+        reel.state = gameUI.status.gameState.IDLE;
         reel.y = -reel.target * gameUI.dimensions.symbolHeight;
 
         const playbackRate = gameUI.sounds.playbackRate[index];
@@ -651,6 +656,7 @@ function debugReels() {
     reels.forEach((reel, index) => {
         debug.push({
             id: reel.id,
+            state: reel.state,
             y: reel.y,
             current: reel.current,
             target: reel.target,

@@ -20,7 +20,7 @@ const slotContainer = document.getElementById('slotContainerSizer');
 
 let breakCounter = 0;
 
-const debugmode = true;
+const debugmode = false;
 
 gameUI.status.gameState = {
     LOADING: 'LOADING',
@@ -39,6 +39,8 @@ gameUI.config.rowCount = config.rows;
 gameUI.config.reelSymbolCount = config.reelSymbolCount;
 gameUI.config.reelSpinSpeed = 80;
 gameUI.config.reelSpacing = 0;
+gameUI.config.reelStopOffset = 60;
+gameUI.config.reelStopIncrement = 5;
 
 const reels = [];
 const images = {}; // Store preloaded images
@@ -391,18 +393,35 @@ async function spinReels() {
 
         reels.forEach((reel, index) => {
             if (reel.spinning) {
-                const progress = elapsed / reel.stopTime;
-                const easing = 1 - Math.pow(1 - progress, 2);
-                const newSpeed = reel.spinSpeed * easing;
-                reel.y += newSpeed;
+                if (reel.state !== gameUI.status.gameState.STOPPING) {
+                    const progress = elapsed / reel.stopTime;
+                    const easing = 1 - Math.pow(1 - progress, 2);
+                    const newSpeed = reel.spinSpeed * easing;
 
-                if (reel.y >= 0) {
-                    reel.y = -gameUI.config.reelSymbolCount * gameUI.dimensions.symbolHeight;
-                }
-                if (elapsed >= reel.stopTime && (index === 0 || reels[index - 1].spinning === false)) {
-                    reel.target = fetchReelResults(reel.symbols.length - gameUI.config.rowCount);
-                    reel.state = gameUI.status.gameState.STOPPING;
-                    stopReel(index);
+                    reel.y += newSpeed;
+
+                    if (reel.y >= 0) {
+                        reel.y = -gameUI.config.reelSymbolCount * gameUI.dimensions.symbolHeight;
+                    }
+
+                    if (
+                        elapsed >= reel.stopTime &&
+                        (index === 0 || reels[index - 1].spinning === false) &&
+                        reel.state !== gameUI.status.gameState.STOPPING
+                    ) {
+                        reel.target = fetchReelResults(reel.symbols.length - gameUI.config.rowCount);
+                        reel.state = gameUI.status.gameState.STOPPING;
+                        reel.spinSpeed = 20;
+                        reel.offset = gameUI.config.reelStopOffset;
+                        reel.y = -reel.target * gameUI.dimensions.symbolHeight + reel.offset;
+                    }
+                } else if (reel.state === gameUI.status.gameState.STOPPING) {
+                    if (reel.offset > 0) {
+                        reel.offset = reel.offset - gameUI.config.reelStopIncrement;
+                        reel.y = -reel.target * gameUI.dimensions.symbolHeight + reel.offset;
+                    } else {
+                        stopReel(index);
+                    }
                 }
             }
         });
@@ -435,7 +454,6 @@ async function spinReels() {
 
         reel.spinning = false;
         reel.state = gameUI.status.gameState.IDLE;
-        reel.y = -reel.target * gameUI.dimensions.symbolHeight;
 
         const playbackRate = gameUI.sounds.playbackRate[index];
 

@@ -39,8 +39,7 @@ gameUI.config.rowCount = config.rows;
 gameUI.config.reelSymbolCount = config.reelSymbolCount;
 gameUI.config.reelSpinSpeed = 80;
 gameUI.config.reelSpacing = 0;
-gameUI.config.reelStopOffset = 60;
-gameUI.config.reelStopIncrement = 5;
+gameUI.config.reelStopIncrement = 2;
 
 const reels = [];
 const images = {}; // Store preloaded images
@@ -377,11 +376,9 @@ async function spinReels() {
     const startTime = performance.now();
 
     reels.forEach((reel, index) => {
-        setTimeout(() => {
-            reel.spinning = true;
-            reel.state = gameUI.status.gameState.SPINNING;
-            reel.spinSpeed = gameUI.config.reelSpinSpeed;
-        }, index * Math.floor(Math.random() * config.reelStopDelay));
+        reel.spinning = true;
+        reel.state = gameUI.status.gameState.SPINNING;
+        reel.spinSpeed = gameUI.config.reelSpinSpeed;
     });
 
     handleAudio('spinStart', 'play');
@@ -412,7 +409,7 @@ async function spinReels() {
                         reel.target = fetchReelResults(reel.symbols.length - gameUI.config.rowCount);
                         reel.state = gameUI.status.gameState.STOPPING;
                         reel.spinSpeed = 20;
-                        reel.offset = gameUI.config.reelStopOffset;
+                        reel.offset = gameUI.dimensions.symbolHeight / 4;
                         reel.y = -reel.target * gameUI.dimensions.symbolHeight + reel.offset;
                     }
                 } else if (reel.state === gameUI.status.gameState.STOPPING) {

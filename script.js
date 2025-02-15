@@ -536,7 +536,7 @@ function calculateWinningLines(results) {
 function animateWinningLine(line) {
     console.log(`Winning line: ${line.index + 1} pays out ${line.payout}`);
 
-    // M.toast({ html: `Winning line: ${line.index + 1}` });
+    new M.Toast({ text: `Winning line: ${line.index + 1}` });
 
     const positions = [];
 

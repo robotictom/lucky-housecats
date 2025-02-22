@@ -391,7 +391,7 @@ async function spinReels() {
         reels.forEach((reel, index) => {
             if (reel.spinning) {
                 if (reel.state !== gameUI.status.gameState.STOPPING) {
-                    const progress = elapsed / reel.stopTime;
+                    const progress = elapsed / config.spinDuration;
                     const easing = 1 - Math.pow(1 - progress, 2);
                     const newSpeed = reel.spinSpeed * easing;
 

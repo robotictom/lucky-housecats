@@ -139,9 +139,6 @@ function initUI() {
         gameHeight = symbolHeight * gameUI.config.rowCount;
         gameWidth = width;
 
-        console.log(`availableHeight: ${availableHeight}`);
-        console.log(`gameHeight: ${gameHeight}`);
-
         // Check if the calculated gameHeight is taller than availableHeight
         if (gameHeight > availableHeight) {
             // Recalculate dimensions based on available height
@@ -152,9 +149,6 @@ function initUI() {
 
             gamewrapper.style.width = `${gameWidth}px`;
         }
-
-        console.log(`Recalculated gameWidth: ${gameWidth}`);
-        console.log(`Recalculated gameHeight: ${gameHeight}`);
 
         return {
             gameWidth: gameWidth,
@@ -204,7 +198,6 @@ function initUI() {
                     const positions = [];
 
                     const line = config.paylines[gameUI.player.selectedPayLines - 1];
-                    console.log(line);
 
                     // Loop through each cell in the winning line
                     for (let i = 0; i < line.length; i++) {
@@ -326,13 +319,80 @@ function drawReels() {
 }
 
 function drawSymbol(x, y, symbol) {
+    const symbolWidth = gameUI.dimensions.symbolWidth;
+    const symbolHeight = gameUI.dimensions.symbolHeight;
     const img = images[symbol.name];
-    ctx.drawImage(img, x, y, gameUI.dimensions.symbolWidth, gameUI.dimensions.symbolHeight);
+    ctx.drawImage(img, x, y, symbolWidth, symbolHeight);
+
+    // If it's a bonus symbol, overlay the value in the center
+    if (symbol.isbonus) {
+        ctx.save(); // Save the current canvas state
+        // Set font and styling for the bonus value text
+        ctx.font = '35px DotGothic16';
+        ctx.fillStyle = 'black'; // You can change this color if needed
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Calculate the center of the drawn image
+        const centerX = x + symbolWidth / 2;
+        const centerY = y + symbolHeight / 2;
+
+        // Draw the bonus value on top of the symbol
+        ctx.fillText(symbol.payout, centerX, centerY);
+
+        ctx.restore(); // Restore the previous canvas state
+    }
 }
 
 function fetchReelResults(length) {
     let target = Math.floor(Math.random() * length);
     return target;
+}
+
+function insertBonusSymbols(symbols, target) {
+    // Define the bonus object template
+    const bonus = {
+        name: 'bonus',
+        src: 'images/bonus.webp',
+        weight: 0,
+        isbonus: true,
+        payout: null,
+        paytable: {},
+    };
+
+    const multipliers = [1, 2, 5, 10, 100];
+
+    // Randomly decide how many bonus symbols to insert (0 to 6)
+    const numBonus = Math.floor(Math.random() * 7); // Generates an integer from 0 to 6
+
+    // Determine valid insertion range, clamped to the array boundaries
+    const lowerBound = Math.max(0, target - 5);
+    const upperBound = Math.min(symbols.length, target + 5);
+
+    // Collect random insertion indices within [lowerBound, upperBound]
+    const insertionIndices = [];
+    for (let i = 0; i < numBonus; i++) {
+        // Generate a random index in the range (inclusive)
+        const randomIndex = Math.floor(Math.random() * (upperBound - lowerBound + 1)) + lowerBound;
+        insertionIndices.push(randomIndex);
+    }
+
+    // Sort indices in descending order so that inserting doesn't shift the indices of upcoming insertions
+    insertionIndices.sort((a, b) => b - a);
+
+    // Insert a bonus object at each chosen index (each insertion uses a fresh copy)
+    insertionIndices.forEach((idx) => {
+        const randomIndex = Math.floor(Math.random() * multipliers.length);
+        bonus.payout = multipliers[randomIndex] * gameUI.player.selectedPayLines;
+        symbols.splice(idx, 0, { ...bonus });
+    });
+
+    return symbols;
+}
+
+function removeBonusSymbols(symbols) {
+    // Filter out all objects with isbonus equal to true.
+    return symbols.filter((symbol) => !symbol.isbonus);
 }
 
 function generateRandomSymbols(count) {
@@ -406,7 +466,10 @@ async function spinReels() {
                         (index === 0 || reels[index - 1].spinning === false) &&
                         reel.state !== gameUI.status.gameState.STOPPING
                     ) {
-                        reel.target = fetchReelResults(reel.symbols.length - gameUI.config.rowCount);
+                        let cleanReels = removeBonusSymbols(reel.symbols);
+
+                        reel.target = fetchReelResults(cleanReels.length - gameUI.config.rowCount);
+                        reel.symbols = insertBonusSymbols(cleanReels, reel.target);
                         reel.state = gameUI.status.gameState.STOPPING;
                         reel.spinSpeed = 20;
                         reel.offset = gameUI.dimensions.symbolHeight / 4;
@@ -461,7 +524,9 @@ async function spinReels() {
 
 async function finalizeSpin(results) {
     handleAudio('spinStart', 'stop');
+
     const winningLines = calculateWinningLines(results);
+    const bonusLines = calculateBonusLines(results);
 
     if (winningLines.length > 0) {
         let totalPayout = 0;
@@ -480,6 +545,31 @@ async function finalizeSpin(results) {
 
     gameUI.balanceElement.textContent = formatCredit(gameUI.player.balance);
     setState(gameUI.status.gameState.IDLE);
+}
+
+function calculateBonusLines(results) {
+    if (!results || results.length === 0) {
+        console.error('Invalid results array in calculateBonusLines');
+        return [];
+    }
+
+    const bonusLines = [];
+    let bonusCount = 0;
+
+    reels.forEach((reel, index) => {
+        const reelResults = results[index];
+
+        for (let index = 0; index < reelResults.length; index++) {
+            const reelIndex = reelResults[index];
+            if (reel.symbols[reelIndex].isbonus) {
+                bonusCount++;
+            }
+        }
+    });
+
+    console.log(`bonus count: ${bonusCount}`);
+
+    // reel.symbols[reel.target].name;
 }
 
 function calculateWinningLines(results) {

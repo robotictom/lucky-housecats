@@ -110,7 +110,7 @@ function formatCredit(amount) {
 function initUI() {
     gameUI.player.balance = config.balance;
     gameUI.player.selectedPayLines = config.paylines.length;
-    gameUI.player.selectedCoinIndex = 1;
+    gameUI.player.selectedCoinIndex = 0;
     gameUI.player.selectedCoinValue = config.creditvalue[gameUI.player.selectedCoinIndex];
     gameUI.player.userAudio = true;
 

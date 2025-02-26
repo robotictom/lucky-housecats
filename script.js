@@ -526,16 +526,18 @@ async function finalizeSpin(results) {
     handleAudio('spinStart', 'stop');
 
     const winningLines = calculateWinningLines(results);
-    const bonusLines = calculateBonusLines(results);
+    const bonus = calculateBonusLines(results);
 
-    if (winningLines.length > 0) {
-        let totalPayout = 0;
+    if (winningLines.length > 0 || bonus.active) {
+        let totalPayout = bonus.payout ? bonus.payout : 0;
 
         for (const line of winningLines) {
-            const linePayout = line.payout * gameUI.player.selectedCoinValue;
+            const linePayout = line.payout;
             totalPayout += linePayout;
             animateWinningLine(line);
         }
+
+        totalPayout = totalPayout * gameUI.player.selectedCoinValue;
 
         gameUI.player.balance += totalPayout;
         gameUI.messageElement.textContent = `You won ${formatCredit(totalPayout)}!`;
@@ -553,8 +555,14 @@ function calculateBonusLines(results) {
         return [];
     }
 
-    const bonusLines = [];
+    const bonus = {
+        active: false,
+        payout: 0,
+        count: 0,
+    };
+
     let bonusCount = 0;
+    let bonusPayout = 0;
 
     reels.forEach((reel, index) => {
         const reelResults = results[index];
@@ -563,13 +571,18 @@ function calculateBonusLines(results) {
             const reelIndex = reelResults[index];
             if (reel.symbols[reelIndex].isbonus) {
                 bonusCount++;
+                bonusPayout += reel.symbols[reelIndex].payout;
             }
         }
     });
 
-    console.log(`bonus count: ${bonusCount}`);
+    if (bonusCount >= config.bonus.trigger) {
+        bonus.active = true;
+        bonus.payout = bonusPayout;
+        bonus.count = bonusCount;
+    }
 
-    // reel.symbols[reel.target].name;
+    return bonus;
 }
 
 function calculateWinningLines(results) {

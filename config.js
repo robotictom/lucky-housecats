@@ -6,8 +6,10 @@ const config = {
     reelStopDelay: 600,
     reelSymbolCount: 64,
     numberOfRotations: 1,
-    creditvalue: [0.01, 0.02, 0.05, 0.1, 1, 2, 5],
-    bonusvalue: [0.5, 1, 2, 5, 10, 100],
+    bonus: {
+        trigger: 3,
+    },
+    creditvalue: [0.01, 0.02, 0.05, 0.1, 0.25, 1, 2, 5],
     symbols: [
         {
             name: 'cherry',

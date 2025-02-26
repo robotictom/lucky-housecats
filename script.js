@@ -383,7 +383,7 @@ function insertBonusSymbols(symbols, target) {
     // Insert a bonus object at each chosen index (each insertion uses a fresh copy)
     insertionIndices.forEach((idx) => {
         const randomIndex = Math.floor(Math.random() * multipliers.length);
-        bonus.payout = multipliers[randomIndex] * gameUI.player.selectedPayLines;
+        bonus.payout = multipliers[randomIndex] * config.paylines.length;
         symbols.splice(idx, 0, { ...bonus });
     });
 

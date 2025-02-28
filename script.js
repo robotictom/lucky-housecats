@@ -42,11 +42,11 @@ gameUI.config.reelSpacing = 0;
 gameUI.config.reelStopIncrement = 2;
 
 const reels = [];
-const images = {}; // Store preloaded images
+const images = {};
 
 let isBonusActive = false;
-let bonusData = null; // Store bonus game data
-let forcedBonusSpinTracker = 0; // Track spins since the last bonus
+let bonusData = null;
+let forcedBonusSpinTracker = 0;
 
 function setState(newState) {
     console.log(`State changed from ${currentState} to ${newState}`);
@@ -114,7 +114,6 @@ function initUI() {
     gameUI.player.selectedCoinValue = config.creditvalue[gameUI.player.selectedCoinIndex];
     gameUI.player.userAudio = true;
 
-    // Calculate the width and available height for the canvas
     const containerWidth = slotContainerSizer.clientWidth;
 
     gameUI.dimensions = calculateDimensions(slotContainer.offsetWidth);
@@ -122,30 +121,25 @@ function initUI() {
     function calculateDimensions(width) {
         let gameWidth, gameHeight, symbolWidth, symbolHeight;
 
-        // Get all .gameUI rows and calculate their total height
         const gameUIRows = document.querySelectorAll('.gameUI');
         let totalGameUIHeight = 0;
 
         gameUIRows.forEach((row) => {
-            totalGameUIHeight += row.clientHeight; // Sum the height of all .gameUI rows
+            totalGameUIHeight += row.clientHeight;
         });
 
-        // Calculate the available height for the canvas
         const availableHeight = window.innerHeight - totalGameUIHeight;
 
-        // Calculate symbol dimensions based on the passed width
         symbolWidth = Math.floor(width / gameUI.config.reelCount);
         symbolHeight = symbolWidth;
         gameHeight = symbolHeight * gameUI.config.rowCount;
         gameWidth = width;
 
-        // Check if the calculated gameHeight is taller than availableHeight
         if (gameHeight > availableHeight) {
-            // Recalculate dimensions based on available height
             symbolHeight = Math.floor(availableHeight / gameUI.config.rowCount);
-            symbolWidth = symbolHeight; // Keep aspect ratio the same
+            symbolWidth = symbolHeight;
             gameHeight = symbolHeight * gameUI.config.rowCount;
-            gameWidth = symbolWidth * gameUI.config.reelCount; // Adjust width based on new symbol width
+            gameWidth = symbolWidth * gameUI.config.reelCount;
 
             gamewrapper.style.width = `${gameWidth}px`;
         }
@@ -199,30 +193,22 @@ function initUI() {
 
                     const line = config.paylines[gameUI.player.selectedPayLines - 1];
 
-                    // Loop through each cell in the winning line
                     for (let i = 0; i < line.length; i++) {
                         const cell = line[i];
 
-                        // Calculate the X and Y positions for the center of each symbol
-                        const x = i * gameUI.dimensions.symbolWidth + gameUI.dimensions.symbolWidth / 2; // Center of the symbol (for all except first and last)
-                        const y = cell * gameUI.dimensions.symbolHeight + gameUI.dimensions.symbolHeight / 2; // Center of the symbol (same for all)
+                        const x = i * gameUI.dimensions.symbolWidth + gameUI.dimensions.symbolWidth / 2;
+                        const y = cell * gameUI.dimensions.symbolHeight + gameUI.dimensions.symbolHeight / 2;
 
-                        // For the first reel, add an additional position for the left edge
                         if (i === 0) {
-                            // First reel: Add the left edge position and the center position
-                            positions.push({ x: i * gameUI.dimensions.symbolWidth, y: y }); // Left edge
-                            positions.push({ x: x, y: y }); // Center
-                        }
-                        // For the last reel, add an additional position for the right edge
-                        else if (i === line.length - 1) {
-                            // Last reel: Add the center position and the right edge position
-                            positions.push({ x: x, y: y }); // Center
+                            positions.push({ x: i * gameUI.dimensions.symbolWidth, y: y });
+                            positions.push({ x: x, y: y });
+                        } else if (i === line.length - 1) {
+                            positions.push({ x: x, y: y });
                             positions.push({
                                 x: i * gameUI.dimensions.symbolWidth,
                                 y: y,
-                            }); // Right edge
+                            });
                         } else {
-                            // For all middle reels, just add the center position
                             positions.push({ x: x, y: y });
                         }
                     }
@@ -263,10 +249,10 @@ function initUI() {
 }
 
 function drawUI() {
-    gameUI.jackpot.grand.textContent = formatJackpot(config.jackpot.grand);
-    gameUI.jackpot.major.textContent = formatJackpot(config.jackpot.major);
-    gameUI.jackpot.minor.textContent = formatJackpot(config.jackpot.minor);
-    gameUI.jackpot.mini.textContent = formatJackpot(config.jackpot.mini);
+    gameUI.jackpot.grand.textContent = formatJackpot(config.bonus.jackpot.grand);
+    gameUI.jackpot.major.textContent = formatJackpot(config.bonus.jackpot.major);
+    gameUI.jackpot.minor.textContent = formatJackpot(config.bonus.jackpot.minor);
+    gameUI.jackpot.mini.textContent = formatJackpot(config.bonus.jackpot.mini);
 
     gameUI.payLines.textContent = gameUI.player.selectedPayLines;
     gameUI.creditValue.textContent = formatCredit(gameUI.player.selectedCoinValue);
@@ -276,7 +262,6 @@ function drawUI() {
     gameUI.balanceElementModal.textContent = formatCredit(gameUI.player.balance);
 }
 
-// Initialize reels with placeholders
 function initReels() {
     ctx.canvas.width = gameUI.dimensions.gameWidth;
     ctx.canvas.height = gameUI.dimensions.gameHeight;
@@ -324,23 +309,19 @@ function drawSymbol(x, y, symbol) {
     const img = images[symbol.name];
     ctx.drawImage(img, x, y, symbolWidth, symbolHeight);
 
-    // If it's a bonus symbol, overlay the value in the center
     if (symbol.isbonus) {
-        ctx.save(); // Save the current canvas state
-        // Set font and styling for the bonus value text
+        ctx.save();
         ctx.font = '35px DotGothic16';
-        ctx.fillStyle = 'black'; // You can change this color if needed
+        ctx.fillStyle = symbol?.color || 'black';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // Calculate the center of the drawn image
         const centerX = x + symbolWidth / 2;
         const centerY = y + symbolHeight / 2;
 
-        // Draw the bonus value on top of the symbol
-        ctx.fillText(symbol.payout, centerX, centerY);
+        ctx.fillText(symbol?.jackpot?.toUpperCase() || symbol.payout, centerX, centerY);
 
-        ctx.restore(); // Restore the previous canvas state
+        ctx.restore();
     }
 }
 
@@ -350,48 +331,38 @@ function fetchReelResults(length) {
 }
 
 function insertBonusSymbols(symbols, target) {
-    // Define the bonus object template
-    const bonus = {
-        name: 'bonus',
-        src: 'images/bonus.webp',
-        weight: 0,
-        isbonus: true,
-        payout: null,
-        paytable: {},
-    };
+    const bonusSymbol = config.symbols.find((s) => s.name === 'bonus');
+    const weightedSymbols = config.bonus.symbols.flatMap((symbol) => Array(symbol.weight).fill(symbol));
 
-    const multipliers = [1, 2, 5, 10, 100];
+    const numBonus = Math.floor(Math.random() * 7);
 
-    // Randomly decide how many bonus symbols to insert (0 to 6)
-    const numBonus = Math.floor(Math.random() * 7); // Generates an integer from 0 to 6
-
-    // Determine valid insertion range, clamped to the array boundaries
     const lowerBound = Math.max(0, target - 5);
     const upperBound = Math.min(symbols.length, target + 5);
 
-    // Collect random insertion indices within [lowerBound, upperBound]
     const insertionIndices = [];
     for (let i = 0; i < numBonus; i++) {
-        // Generate a random index in the range (inclusive)
         const randomIndex = Math.floor(Math.random() * (upperBound - lowerBound + 1)) + lowerBound;
         insertionIndices.push(randomIndex);
     }
 
-    // Sort indices in descending order so that inserting doesn't shift the indices of upcoming insertions
     insertionIndices.sort((a, b) => b - a);
 
-    // Insert a bonus object at each chosen index (each insertion uses a fresh copy)
     insertionIndices.forEach((idx) => {
-        const randomIndex = Math.floor(Math.random() * multipliers.length);
-        bonus.payout = multipliers[randomIndex] * config.paylines.length;
-        symbols.splice(idx, 0, { ...bonus });
-    });
+        const randomIndex = Math.floor(Math.random() * weightedSymbols.length);
+        const [symbol] = weightedSymbols.splice(randomIndex, 1);
 
+        bonusSymbol.jackpot = symbol?.jackpot || null;
+        bonusSymbol.color = symbol?.jackpot ? symbol.color : null;
+        bonusSymbol.payout = symbol?.jackpot
+            ? config.bonus.jackpot[symbol.jackpot] / gameUI.player.selectedCoinValue
+            : symbol.multiplier * config.paylines.length;
+
+        symbols.splice(idx, 0, { ...bonusSymbol });
+    });
     return symbols;
 }
 
 function removeBonusSymbols(symbols) {
-    // Filter out all objects with isbonus equal to true.
     return symbols.filter((symbol) => !symbol.isbonus);
 }
 
@@ -402,9 +373,10 @@ function generateRandomSymbols(count) {
 
     for (let i = 0; i < count; i++) {
         const randomIndex = Math.floor(Math.random() * weightedSymbols.length);
-        const symbol = weightedSymbols[randomIndex];
+        const [symbol] = weightedSymbols.splice(randomIndex, 1);
         randomSymbols.push(symbol);
     }
+
     randomSymbols = randomSymbols.concat(randomSymbols.slice(0, gameUI.config.rowCount));
     return randomSymbols;
 }
@@ -431,7 +403,7 @@ async function spinReels() {
     gameUI.balanceElement.textContent = formatCredit(gameUI.player.balance);
     gameUI.messageElement.textContent = 'Spinning...';
 
-    forcedBonusSpinTracker++; // Increment spin tracker
+    forcedBonusSpinTracker++;
 
     const startTime = performance.now();
 
@@ -499,7 +471,7 @@ async function spinReels() {
                 const reelRows = [];
 
                 for (let row = 0; row < gameUI.config.rowCount; row++) {
-                    reelRows.push(target + row); // Add the current row value
+                    reelRows.push(target + row);
                 }
 
                 results[index] = reelRows;
@@ -602,7 +574,6 @@ function calculateWinningLines(results) {
         if (index <= gameUI.player.selectedPayLines) {
             const lineSymbols = payline.map((row, reelIndex) => {
                 if (!results[reelIndex] || !results[reelIndex][row]) {
-                    //console.error(`Invalid row ${row} for reel ${reelIndex}`);
                     return null;
                 }
                 return reels[reelIndex].symbols[results[reelIndex][row]];
@@ -643,30 +614,22 @@ function animateWinningLine(line) {
 
     const positions = [];
 
-    // Loop through each cell in the winning line
     for (let i = 0; i < line.cells.length; i++) {
         const cell = line.cells[i];
 
-        // Calculate the X and Y positions for the center of each symbol
-        const x = cell.reel * gameUI.dimensions.symbolWidth + gameUI.dimensions.symbolWidth / 2; // Center of the symbol (for all except first and last)
-        const y = cell.row * gameUI.dimensions.symbolHeight + gameUI.dimensions.symbolHeight / 2; // Center of the symbol (same for all)
+        const x = cell.reel * gameUI.dimensions.symbolWidth + gameUI.dimensions.symbolWidth / 2;
+        const y = cell.row * gameUI.dimensions.symbolHeight + gameUI.dimensions.symbolHeight / 2;
 
-        // For the first reel, add an additional position for the left edge
         if (i === 0) {
-            // First reel: Add the left edge position and the center position
-            positions.push({ x: cell.reel * gameUI.dimensions.symbolWidth, y: y }); // Left edge
-            positions.push({ x: x, y: y }); // Center
-        }
-        // For the last reel, add an additional position for the right edge
-        else if (i === line.cells.length - 1) {
-            // Last reel: Add the center position and the right edge position
-            positions.push({ x: x, y: y }); // Center
+            positions.push({ x: cell.reel * gameUI.dimensions.symbolWidth, y: y });
+            positions.push({ x: x, y: y });
+        } else if (i === line.cells.length - 1) {
+            positions.push({ x: x, y: y });
             positions.push({
                 x: (cell.reel + 1) * gameUI.dimensions.symbolWidth,
                 y: y,
-            }); // Right edge
+            });
         } else {
-            // For all middle reels, just add the center position
             positions.push({ x: x, y: y });
         }
     }
@@ -678,25 +641,20 @@ function drawLine(positions, clear) {
         drawReels();
     }
 
-    // Start the drawing path
     ctx.beginPath();
 
-    // Move to the first position (start of the line)
     ctx.moveTo(positions[0].x, positions[0].y);
 
-    // Loop through the rest of the positions and draw lines connecting each point
     for (let i = 1; i < positions.length; i++) {
         const pos = positions[i];
         ctx.lineTo(pos.x, pos.y);
     }
 
-    // Set the stroke width and color
     ctx.lineWidth = 5;
     ctx.strokeStyle = 'rgba(255, 111, 0, 0.7)';
     ctx.stroke();
 }
 
-// Initialize the game
 async function initializeGame() {
     try {
         await preloadImages();
@@ -788,8 +746,6 @@ function debugReels() {
     console.table(debug);
 }
 
-// Show preloader when page is loading
 document.addEventListener('DOMContentLoaded', () => {
-    // Start initializing the game
     initializeGame();
 });

@@ -1,4 +1,5 @@
 const config = {
+    name: 'Lucky Housecats',
     balance: 100,
     reels: 5,
     rows: 3,
@@ -6,9 +7,6 @@ const config = {
     reelStopDelay: 600,
     reelSymbolCount: 64,
     numberOfRotations: 1,
-    bonus: {
-        trigger: 3,
-    },
     creditvalue: [0.01, 0.02, 0.05, 0.1, 0.25, 1, 2, 5],
     symbols: [
         {
@@ -113,10 +111,99 @@ const config = {
         [2, 0, 2, 0, 2],
         [2, 0, 1, 0, 2],
     ],
-    jackpot: {
-        mini: 50,
-        minor: 100,
-        major: 500,
-        grand: 1000,
+    bonus: {
+        trigger: 3,
+        jackpot: {
+            mini: 50,
+            minor: 100,
+            major: 500,
+            grand: 1000,
+        },
+        symbols: [
+            {
+                name: 'multiplier_1x',
+                multiplier: 1,
+                weight: 10,
+            },
+            {
+                name: 'multiplier_1x',
+                multiplier: 1,
+                weight: 10,
+            },
+            {
+                name: 'multiplier_1x',
+                multiplier: 1,
+                weight: 10,
+            },
+            {
+                name: 'multiplier_2x',
+                multiplier: 2,
+                weight: 50,
+            },
+            {
+                name: 'multiplier_3x',
+                multiplier: 3,
+                weight: 50,
+            },
+            {
+                name: 'multiplier_4x',
+                multiplier: 4,
+                weight: 50,
+            },
+            {
+                name: 'multiplier_5x',
+                multiplier: 5,
+                weight: 25,
+            },
+            {
+                name: 'multiplier_10x',
+                multiplier: 10,
+                weight: 10,
+            },
+            {
+                name: 'multiplier_15x',
+                multiplier: 15,
+                weight: 5,
+            },
+            {
+                name: 'multiplier_20x',
+                multiplier: 20,
+                weight: 5,
+            },
+            {
+                name: 'multiplier_25x',
+                multiplier: 25,
+                weight: 5,
+            },
+            {
+                name: 'multiplier_50x',
+                multiplier: 50,
+                weight: 5,
+            },
+            {
+                name: 'jackpot_mini',
+                jackpot: 'mini',
+                color: '#0000FF',
+                weight: 50,
+            },
+            {
+                name: 'jackpot_minor',
+                jackpot: 'minor',
+                color: '#008000',
+                weight: 25,
+            },
+            {
+                name: 'jackpot_major',
+                jackpot: 'major',
+                color: '#FFFF00',
+                weight: 25,
+            },
+            {
+                name: 'jackpot_grand',
+                jackpot: 'grand',
+                color: '#FF0000',
+                weight: 25,
+            },
+        ],
     },
 };

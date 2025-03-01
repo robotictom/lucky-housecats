@@ -148,10 +148,9 @@ function initUI() {
         };
     }
 
-    gameUI.jackpot.grand = document.getElementById('gameUI-jackpot_grand');
-    gameUI.jackpot.major = document.getElementById('gameUI-jackpot_major');
-    gameUI.jackpot.minor = document.getElementById('gameUI-jackpot_minor');
-    gameUI.jackpot.mini = document.getElementById('gameUI-jackpot_mini');
+    Object.keys(config.bonus.jackpot).forEach((level) => {
+        gameUI.jackpot[level] = document.getElementById(`gameUI-jackpot_${level}`);
+    });
 
     gameUI.balanceElement = document.getElementById('gameUI-balance');
     gameUI.balanceElementModal = document.getElementById('gameUI-balance-modal');
@@ -245,10 +244,9 @@ function initUI() {
 }
 
 function drawUI() {
-    gameUI.jackpot.grand.textContent = formatJackpot(config.bonus.jackpot.grand);
-    gameUI.jackpot.major.textContent = formatJackpot(config.bonus.jackpot.major);
-    gameUI.jackpot.minor.textContent = formatJackpot(config.bonus.jackpot.minor);
-    gameUI.jackpot.mini.textContent = formatJackpot(config.bonus.jackpot.mini);
+    Object.keys(config.bonus.jackpot).forEach((level) => {
+        gameUI.jackpot[level].textContent = formatJackpot(config.bonus.jackpot[level]);
+    });
 
     gameUI.payLines.textContent = gameUI.player.selectedPayLines;
     gameUI.creditValue.textContent = formatCredit(gameUI.player.selectedCoinValue);

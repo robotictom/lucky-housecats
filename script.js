@@ -44,10 +44,6 @@ gameUI.config.reelStopIncrement = 2;
 const reels = [];
 const images = {};
 
-let isBonusActive = false;
-let bonusData = null;
-let forcedBonusSpinTracker = 0;
-
 function setState(newState) {
     console.log(`State changed from ${currentState} to ${newState}`);
     currentState = newState;
@@ -387,7 +383,7 @@ async function spinReels() {
         return;
     }
 
-    if (isBonusActive) {
+    if (isState(gameUI.status.gameState.BONUS)) {
         gameUI.messageElement.textContent = 'Finish the bonus game first!';
         return;
     }
@@ -402,8 +398,6 @@ async function spinReels() {
     gameUI.player.balance -= gameUI.player.selectedPayLines * gameUI.player.selectedCoinValue;
     gameUI.balanceElement.textContent = formatCredit(gameUI.player.balance);
     gameUI.messageElement.textContent = 'Spinning...';
-
-    forcedBonusSpinTracker++;
 
     const startTime = performance.now();
 
@@ -500,7 +494,11 @@ async function finalizeSpin(results) {
     const winningLines = calculateWinningLines(results);
     const bonus = calculateBonusLines(results);
 
-    if (winningLines.length > 0 || bonus.active) {
+    if (bonus.active) {
+        setState(gameUI.status.gameState.BONUS);
+    }
+
+    if (winningLines.length > 0) {
         let totalPayout = bonus.payout ? bonus.payout : 0;
 
         for (const line of winningLines) {

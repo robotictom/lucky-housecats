@@ -305,13 +305,13 @@ function drawSymbol(x, y, symbol) {
 
     if (symbol.isbonus) {
         ctx.save();
-        ctx.font = '35px DotGothic16';
+        ctx.font = '28px DotGothic16';
         ctx.fillStyle = symbol?.color || 'black';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
         const centerX = x + symbolWidth / 2;
-        const centerY = y + symbolHeight / 2;
+        const centerY = y + symbolHeight * 0.65;
 
         ctx.fillText(symbol?.jackpot?.toUpperCase() || symbol.payout, centerX, centerY);
 
@@ -496,7 +496,7 @@ async function finalizeSpin(results) {
         setState(gameUI.status.gameState.BONUS);
     }
 
-    if (winningLines.length > 0) {
+    if (winningLines.length > 0 || bonus.active) {
         let totalPayout = bonus.payout ? bonus.payout : 0;
 
         for (const line of winningLines) {

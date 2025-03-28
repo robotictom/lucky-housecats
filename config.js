@@ -112,7 +112,7 @@ const config = {
         [2, 0, 1, 0, 2],
     ],
     bonus: {
-        trigger: 3,
+        trigger: 6,
         jackpot: {
             mini: 50,
             minor: 100,

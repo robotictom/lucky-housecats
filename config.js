@@ -74,7 +74,7 @@ const config = {
         },
         {
             name: 'bonus',
-            src: 'images/bonus.webp',
+            src: 'images/bonus.png',
             weight: 0,
             isbonus: true,
             paytable: {},
